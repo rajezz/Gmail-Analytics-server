@@ -1,0 +1,80 @@
+{
+  "name": "gmail-analytics-server",
+  "version": "1.0.0",
+  "description": "A Node.js server to process Gmail threads and categorize them based on the email address. The main advantage of segregating the emails/threads based on email is that we can get insights on number of emails received for particular address. Sorting them based on the hierarchy will help us in observing the spam/junk mails.",
+  "main": "index.js",
+  "scripts": {
+    "build-ts": "tsc",
+    "build": "npm run build-ts && npm run lint",
+    "test": "jest --forceExit --coverage --verbose",
+    "start": "node dist/server.js",
+    "watch-node": "nodemon dist/server.js",
+    "watch-test": "npm run test -- --watchAll",
+    "watch-ts": "tsc -w",
+    "debug": "npm run build && npm run watch-debug",
+    "lint:fix": "eslint --fix --config .eslintrc.json",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajezz/Gmail-Analytics-server.git"
+  },
+  "keywords": [],
+  "author": "Rajeswaran <rajezzandrj@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rajezz/Gmail-Analytics-server/issues"
+  },
+  "homepage": "https://github.com/rajezz/Gmail-Analytics-server#readme",
+  "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "^1.20.2",
+    "compression": "^1.7.4",
+    "connect-mongo": "^4.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "errorhandler": "^1.5.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.15.0",
+    "helmet": "^6.0.1",
+    "joi": "^17.8.3",
+    "lodash": "^4.17.21",
+    "lusca": "^1.7.0",
+    "mongoose": "^7.0.0",
+    "passport": "^0.6.0",
+    "types-joi": "^2.1.0",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt-nodejs": "^0.0.31",
+    "@types/bluebird": "^3.5.38",
+    "@types/body-parser": "^1.19.2",
+    "@types/errorhandler": "^1.5.0",
+    "@types/eslint": "^8.21.1",
+    "@types/express": "^4.17.17",
+    "@types/express-session": "^1.17.6",
+    "@types/jest": "^29.4.0",
+    "@types/lodash": "^4.14.191",
+    "@types/lusca": "^1.7.1",
+    "@types/mongodb": "^4.0.7",
+    "@types/node": "^18.14.1",
+    "@types/passport": "^1.0.12",
+    "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.4.3",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
