@@ -20,6 +20,9 @@
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["typings.d.ts", "src/**/*"],
+  "ts-node": {
+    "files": true
+  },
+  "include": ["typings.d.ts", "src/**/*", "environment.d.ts"],
   "exclude": ["./dist", "./node_modules"]
 }

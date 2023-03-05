@@ -43,6 +43,7 @@
     "lusca": "^1.7.0",
     "mongoose": "^7.0.0",
     "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "types-joi": "^2.1.0",
     "winston": "^3.8.2"
   },
@@ -60,6 +61,7 @@
     "@types/mongodb": "^4.0.7",
     "@types/node": "^18.14.1",
     "@types/passport": "^1.0.12",
+    "@types/passport-google-oauth20": "^2.0.11",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",

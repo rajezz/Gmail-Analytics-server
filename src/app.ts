@@ -8,8 +8,9 @@ import passport from "passport";
 import session from "express-session";
 import mongoose from "mongoose";
 
-import { mongoUrl, sessionSecret } from "./lib/secret";
-import { rootRouter } from "./routes";
+import { MONGODB_URI, SESSION_SECRET } from "@/lib/secret";
+
+import { apiRouter } from "@/routes/api";
 
 // Create expresss server...
 const app = express();
@@ -17,7 +18,7 @@ const app = express();
 // Connect to MongoDB...
 
 mongoose
-  .connect(mongoUrl)
+  .connect(MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB!");
   })
@@ -32,19 +33,22 @@ app.use(
   session({
     resave: true,
     saveUninitialized: true,
-    secret: sessionSecret,
+    secret: SESSION_SECRET,
     store: new MongoStore({
-      mongoUrl,
+      mongoUrl: MONGODB_URI,
     }),
   })
 );
+
+// Initialize passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 
-app.use(rootRouter);
+app.use("/api", apiRouter);
 
 export default app;
