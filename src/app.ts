@@ -8,15 +8,16 @@ import passport from "passport";
 import session from "express-session";
 import mongoose from "mongoose";
 
-import { MONGODB_URI, SESSION_SECRET } from "@/lib/secret";
+import { MONGODB_URI, SESSION_SECRET } from "./lib/secret";
 
-import { apiRouter } from "@/routes/api";
+import { apiRouter } from "./routes/api";
 
 // Create expresss server...
 const app = express();
 
 // Connect to MongoDB...
 
+import "./config/passport";
 mongoose
   .connect(MONGODB_URI)
   .then(() => {

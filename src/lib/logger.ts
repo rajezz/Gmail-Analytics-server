@@ -1,17 +1,37 @@
-import { createLogger, transports } from "winston";
+import { createLogger, transports, format } from "winston";
+import "winston-daily-rotate-file";
+
+const defaultFormat = format.combine(
+  format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+  format.errors({ stack: true })
+);
 
 const logger = createLogger({
+  format: format.combine(defaultFormat, format.splat(), format.json()),
   transports: [
+    new transports.DailyRotateFile({
+      filename: "out.log".replace(".log", "-%DATE%.log"),
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: false,
+      level: "silly",
+      format: format.combine(
+        defaultFormat,
+        format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+      ),
+    }),
     new transports.Console({
-      level: process.env.LOG_LEVEL || "info",
+      format: format.combine(
+        defaultFormat,
+        format.colorize(),
+        format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+      ),
+      level: "silly",
     }),
     new transports.File({
-        filename: "out.log",
-        level: "debug"
+      filename: "out.log",
+      level: "debug",
     }),
   ],
 });
 
-
-
-export default logger
+export default logger;

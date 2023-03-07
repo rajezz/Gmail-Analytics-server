@@ -1,12 +1,12 @@
 import { Request } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy, GoogleCallbackParameters, Profile, VerifyCallback } from "passport-google-oauth20";
-import { GOOGLE_CALLBACK_URL } from "@/_data/urls";
+import { GOOGLE_CALLBACK_URL } from "../_data/urls";
 
 import util from "util";
 
-import { User } from "@/models/User";
-import logger from "@/lib/logger";
+import { User } from "../models/User";
+import logger from "../lib/logger";
 
 async function googleStrategyCallback(
   req: Request,

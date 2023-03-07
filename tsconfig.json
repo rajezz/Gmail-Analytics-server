@@ -10,7 +10,7 @@
     "strict": true,
     "noImplicitAny": false,
     "noUnusedLocals": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]

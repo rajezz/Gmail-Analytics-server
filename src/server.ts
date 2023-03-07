@@ -1,5 +1,5 @@
 import errorHandler from "errorhandler";
-import app from "@/app";
+import app from "./app";
 
 if (process.env.NODE_ENV === "development") {
   app.use(errorHandler());
