@@ -10,7 +10,7 @@ const logger = createLogger({
   format: format.combine(defaultFormat, format.splat(), format.json()),
   transports: [
     new transports.DailyRotateFile({
-      filename: "out.log".replace(".log", "-%DATE%.log"),
+      filename: (process.env.FILE_NAME || "out.log").replace(".log", "-%DATE%.log"),
       datePattern: "YYYY-MM-DD",
       zippedArchive: false,
       level: "silly",
@@ -26,11 +26,7 @@ const logger = createLogger({
         format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
       ),
       level: "silly",
-    }),
-    new transports.File({
-      filename: "out.log",
-      level: "debug",
-    }),
+    })
   ],
 });
 
