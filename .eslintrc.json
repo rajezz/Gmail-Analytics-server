@@ -20,9 +20,9 @@
       }
     ],
     "max-len": [
-      "error",
+      "warn",
       {
-        "code": 120
+        "code": 100
       }
     ]
   }
