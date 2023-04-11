@@ -1,4 +1,3 @@
-import { ObjectId } from "mongoose";
 
 export interface UserDocument {
     name: string;
@@ -6,6 +5,5 @@ export interface UserDocument {
     picture?: string;
     googleId: string;
     refreshToken: string;
-    apiKey?: string;
     scopePref: string;
 }

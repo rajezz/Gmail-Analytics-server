@@ -1,19 +1,24 @@
 import { Request } from "express";
 import passport from "passport";
+import util from "util";
 import {
     Strategy as GoogleStrategy,
     GoogleCallbackParameters,
     Profile,
     VerifyCallback,
 } from "passport-google-oauth20";
+
 import { GOOGLE_CALLBACK_URL } from "../_data/urls";
-
-import util from "util";
-
-import { User } from "../models/User";
 import logger from "../lib/logger";
-import { UserDocument } from "../types/user";
-import { findUserDocById, upsertUserDoc } from "../services/UserProvider";
+import { User, UserDocument } from "../models/User";
+import {
+    createDoc,
+    findById,
+    findByQuery,
+    updateOrUpsert,
+} from "../services/MongoProviders/common";
+import MongoError from "../lib/MongoError";
+import { Import, ImportDocument } from "../models/Import";
 
 async function googleStrategyCallback(
     req: Request,
@@ -26,7 +31,7 @@ async function googleStrategyCallback(
     try {
         logger.info("googleStrategyCallback called");
         logger.debug(`Received profile object: ${util.inspect(profile, false, 3, true)}`);
-        logger.debug(`Received params: ${util.inspect(params, false, 3, true)}`);
+        // logger.debug(`Received params: ${util.inspect(params, false, 3, true)}`);
         logger.debug(`Received refreshToken: ${refreshToken}`);
 
         if (!profile.emails?.[0]) {
@@ -43,20 +48,39 @@ async function googleStrategyCallback(
             refreshToken,
             scopePref,
         };
+        const query = { googleId: currentUser.googleId };
 
-        const [error, response] = await upsertUserDoc(currentUser);
-        if (error) {
-            logger.error(
-                `Couldn't update user document. Error: ${util.inspect(error, false, 3, true)}`
-            );
-            return;
-        }
-        logger.debug(
-            `user document Added/Updated. User: ${util.inspect(response, false, 3, true)}`
+        const [userError, userResponse] = await updateOrUpsert<UserDocument>(
+            User,
+            query,
+            currentUser
         );
-        if (response) return done(null, response);
+
+        if (userError instanceof MongoError) {
+            logger.error("Failed to update User document.");
+            return done(userError.message);
+        }
+
+        const [fetchError, fetchResponse] = await findByQuery<ImportDocument>(Import, query);
+
+        logger.info(`fetchError: ${util.inspect(fetchError, true, 3, true)}`);
+        logger.info(`fetchResponse: ${util.inspect(fetchResponse, true, 3, true)}`);
+
+        if (typeof fetchResponse !== "undefined") {
+            return done(null, userResponse);
+        }
+
+        if (fetchError.name === "NotFoundError") {
+            logger.info(
+                `[${currentUser.googleId}] - Import details not found. Creating Import documnet...`
+            );
+            await createDoc<ImportDocument>(Import, query);
+        }
+
+        return done(null, userResponse);
     } catch (error) {
         logger.error(error);
+        return done(<Error>error);
     }
 }
 const googleStrategy = new GoogleStrategy(
@@ -72,18 +96,17 @@ const googleStrategy = new GoogleStrategy(
 passport.use(googleStrategy);
 
 passport.serializeUser((user: any, callback) => {
-    logger.debug(`Serializing user: ${util.inspect(user, false, 3, true)}`);
+    logger.debug(`Serializing user: ${user.email}`);
     callback(null, user._id);
 });
 
 passport.deserializeUser(async (id, callback) => {
-    const [error, user] = await findUserDocById(id as string);
+    const [error, user] = await findById<UserDocument>(User, <string>id);
 
-    if (error) {
-        logger.error(`Error while serializing user: ${util.inspect(error, false, 3, true)}`);
-        callback(error, null);
+    if (error instanceof MongoError) {
+        callback(error.toObj(), null);
     }
 
-    logger.debug(`DeSerialized user: ${util.inspect(user, false, 3, true)}`);
+    logger.debug(`DeSerialized user: ${user.email}`);
     if (user) callback(null, user);
 });

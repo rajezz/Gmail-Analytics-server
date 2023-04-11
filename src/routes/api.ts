@@ -5,15 +5,20 @@ import logger from "../lib/logger";
 import { CLIENT_LOGIN_ERROR_URL, CLIENT_LOGIN_SUCCESS_URL } from "../_data/urls";
 import { Router } from "express";
 
-import { retrieveApiKey, sendUser } from "../controllers/user";
-import { isUserAuthenticated } from "../middlewares/auth";
+import { retrieveApiKey, sendUser, logoutUser } from "../controllers/user";
+import { authenticateUser } from "../middlewares/auth";
 import { loginWithGoogleSSO, getEmails } from "../controllers/google";
+import { startImport } from "../controllers/import";
 
 const apiRouter = Router();
 
 apiRouter.get("/google/login", loginWithGoogleSSO);
 
-apiRouter.get("/google/emails", isUserAuthenticated, getEmails);
+apiRouter.get("/google/logout", logoutUser);
+apiRouter.get("/google/emails", authenticateUser, getEmails);
+
+// Import API endpoints...
+apiRouter.get("/import/start", authenticateUser, startImport);
 
 apiRouter.get(
     "/google/callback",
@@ -28,8 +33,8 @@ apiRouter.get(
     }
 );
 
-apiRouter.get("/user/authenticate", isUserAuthenticated, sendUser);
+apiRouter.get("/user/authenticate", authenticateUser, sendUser);
 
-apiRouter.get("/user/apikey", isUserAuthenticated, retrieveApiKey);
+apiRouter.get("/user/apikey", authenticateUser, retrieveApiKey);
 
 export { apiRouter };

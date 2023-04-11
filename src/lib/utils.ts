@@ -1,3 +1,6 @@
+// import util from "util";
+// import logger from "./logger";
+
 export function asyncWrapper(method: any): Promise<any> {
     return new Promise((resolve) => {
         method
@@ -20,11 +23,13 @@ export const getGoogleAPIOption = (accessToken: string) => ({
     },
 });
 
-export const trimObject = (obj: any, keys: Array<string>) => {
+export const trimObject = (obj: any, keys: Array<string>): any => {
+    // logger.debug(`obj: ${util.inspect(obj, false, 3, true)}`);
+    // logger.debug(`keys: ${util.inspect(keys, false, 3, true)}`);
     return keys.reduce(
         (acc, key) => ({
             ...acc,
-            ...(Object.prototype.hasOwnProperty.call(obj, key) ? { [key]: obj[key] } : {}),
+            ...(typeof obj[key] != "undefined" ? { [key]: obj[key] } : {}),
         }),
         {}
     );
